@@ -1,5 +1,5 @@
-//class Solution {
-//public:
+class Solution {
+public:
     bool hasCycle(ListNode *head) {
         if(head == NULL)
             return false;
@@ -8,8 +8,8 @@
             slow = slow->next;
             fast = fast->next->next;
             if(fast == slow)
-           // return true;
+                 return true;
         }
-       // return false;
+            return false;
     }
 };
