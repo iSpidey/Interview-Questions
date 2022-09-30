@@ -24,11 +24,14 @@ public:
             int h=skyPoints[i].second;
             int x=skyPoints[i].first;
             
-            if (skyPoints[i].second < 0){ // handling start of buidling case
+            if (skyPoints[i].second < 0){ 
+            // handling start of buidling case
                 
                 heights[-1* h]++;
-                if (maxHeight!=heights.rbegin()->first){ //change in height
-                    maxHeight=heights.rbegin()->first; //last key in map will have max height 
+                if (maxHeight!=heights.rbegin()->first){
+                //change in height
+                    maxHeight=heights.rbegin()->first; 
+                    //last key in map will have max height 
                     ans.push_back(vector<int>{x,maxHeight}); 
                 }
             }else{ // handling end of buidling case
