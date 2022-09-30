@@ -1,63 +1,58 @@
-@Test
-					@DisplayName("Stock fetch with limit >50")
-					@WithMockUser
-					void getProductsStocklimitexceedTest() {	
-						
-						StockResponse response=new StockResponse();
-						response.setReturnCode(8008);
-						
-						AllProducts reqBody=new AllProducts();
-						reqBody.setProducts(Arrays.asList("20002","1234","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50"));
-						try {
-							when(utils.verifyFcAvailable(any(), any())).thenReturn(true);
-							when(utils.verifyFcActive(any(), any())).thenReturn(true);
-						
-						when(service.getAllProductStocks(any(),any(),any(),any(),any())).thenReturn(Mono.just(response));
-						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-						
-						StepVerifier.create(
-								webTestClient.method(HttpMethod.GET).uri(Endpoints.ENDPOINT_V1_NMIS_PREFIX+Endpoints.PRODUCT+"?excludeShortExpiryFlag=true&branchCode=769").body(Mono.just(reqBody), AllProducts.class)
-						.accept(MediaType.APPLICATION_JSON).exchange()
-						.expectStatus().isOk()
-						.returnResult(StockResponse.class)
-						.getResponseBody())
-						.expectNext(response).verifyComplete();
-				
-					}
-	
-					
-					@Test
-					@DisplayName("Stock fetch fc not available")
-					@WithMockUser
-					void getProductsfcnotavailableTest() {	
-						
-						StockResponse response=new StockResponse();
-						response.setReturnCode(8007);
-						
-						AllProducts reqBody=new AllProducts();
-						reqBody.setProducts(Arrays.asList("20002","1234"));
-						try {
-							when(utils.verifyFcAvailable(any(), any())).thenReturn(false);
-					
-						
-						when(service.getAllProductStocks(any(),any(),any(),any(),any())).thenReturn(Mono.just(response));
-						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-						
-						StepVerifier.create(
-								webTestClient.method(HttpMethod.GET).uri(Endpoints.ENDPOINT_V1_NMIS_PREFIX+Endpoints.PRODUCT+"?excludeShortExpiryFlag=true&branchCode=799").body(Mono.just(reqBody), AllProducts.class)
-						.accept(MediaType.APPLICATION_JSON).exchange()
-						.expectStatus().isOk()
-						.returnResult(StockResponse.class)
-						.getResponseBody())
-						.expectNext(response).verifyComplete();
-				
-					}
-	
+class Solution {
+public:
+    vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
+  vector<pair<int,int>> skyPoints; 
+        for (int i=0; i<buildings.size(); i++){    
+            int x=buildings[i][0];
+            int y=buildings[i][1];
+            int h=buildings[i][2];
+            
+            skyPoints.push_back( make_pair(x,-1*h) );  //-ve height for start of building
+            skyPoints.push_back( make_pair(y,h) );     //+ve height for end of building
+        }
+        sort(skyPoints.begin(), skyPoints.end(), sortFunc); // start and end points of buildings in asc order
+        
+        map<int,int> heights; // used as maxheap or priority queue  and implemented using map  
+                              //bcoz its keys are sorted & direct deletion of any key possible
+        
+        heights[0]=1; // at begin height is zero and also end height is zero
+        int maxHeight=0;
+        vector<vector<int>> ans;
+        
+        for (int i=0;i<skyPoints.size();i++){
+            
+            int h=skyPoints[i].second;
+            int x=skyPoints[i].first;
+            
+            if (skyPoints[i].second < 0){ // handling start of buidling case
+                
+                heights[-1* h]++;
+                if (maxHeight!=heights.rbegin()->first){ //change in height
+                    maxHeight=heights.rbegin()->first; //last key in map will have max height 
+                    ans.push_back(vector<int>{x,maxHeight}); 
+                }
+            }else{ // handling end of buidling case
+                
+                heights[h]--;
+                if (heights[h]==0){
+                    heights.erase(skyPoints[i].second);
+                }
+                if (maxHeight!=heights.rbegin()->first){ //change in height
+                    maxHeight=heights.rbegin()->first;
+                    ans.push_back(vector<int>{x,maxHeight});
+                }
+            }
+            
+        }
+        return ans;
+    }
+    
+
+    static bool sortFunc( pair<int,int>& a, pair<int,int>& b){
+        if (a.first==b.first){
+            return (a.second<b.second);
+        }else{
+            return (a.first<b.first);
+        }
+    }
+};
